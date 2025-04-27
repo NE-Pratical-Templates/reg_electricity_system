@@ -7,16 +7,16 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
 import rw.reg.Electricity.v1.audits.InitiatorAudit;
-import rw.reg.Electricity.v1.enums.EAccountStatus;
 import rw.reg.Electricity.v1.enums.ETokenStatus;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
-@Table(name = "tokens")
+@Table(name = "purchased_tokens")
 
 public class Token extends InitiatorAudit {
     @Id
@@ -45,4 +45,16 @@ public class Token extends InitiatorAudit {
 
     @Column(name = "amount")
     private Double amount;
+
+    @Transient
+    public LocalDateTime getExpirationDate() {
+        return purchasedDate.plusDays(tokenValueDays);
+    }
+
+    // Check if the token is expiring in the next 5 hours
+    @Transient
+    public boolean isExpiringIn5Hours() {
+        LocalDateTime expirationDate = getExpirationDate();
+        return expirationDate != null && ChronoUnit.HOURS.between(LocalDateTime.now(), expirationDate) <= 5;
+    }
 }

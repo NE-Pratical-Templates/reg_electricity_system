@@ -97,6 +97,18 @@ public class Utility {
         }
         return resetCode.toString();
     }
+    public static String generateMeterToken() {
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder(16);
+        for (int i = 0; i < 16; i++) {
+            sb.append(random.nextInt(10));
+        }
+        return sb.toString();
+    }
+
+    public static String formatToken(String token) {
+        return token.replaceAll("(.{4})", "$1-").replaceAll("-$", "");
+    }
 
 
 }

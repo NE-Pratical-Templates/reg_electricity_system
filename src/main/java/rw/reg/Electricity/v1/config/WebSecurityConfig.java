@@ -34,7 +34,7 @@ public class WebSecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(request ->
                         request.requestMatchers(WHITE_LIST).permitAll()
                                 .requestMatchers(ADMIN_WHITE_LIST).hasRole("ADMIN")
-
+                                .requestMatchers(CUSTOMER_WHITE_LIST).hasRole("CUSTOMER")
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).authenticationProvider(authenticationProvider()).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -82,5 +82,9 @@ public class WebSecurityConfig {
             "/api/v1/meters/register/**",
             "/api/v1/meters/all",
             "/api/v1/meters/customer/all/**"
+    };
+
+    private static final String[] CUSTOMER_WHITE_LIST = {
+            "/api/v1/purchases/register"
     };
 }

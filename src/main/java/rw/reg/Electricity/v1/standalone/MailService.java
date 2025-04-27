@@ -63,6 +63,16 @@ public class MailService {
         sendEmail(to, subject, html);
     }
 
+    public void sendTokenExpiryNotification(String to, String fullName, String meterNumber, String generatedMessage) {
+        String subject = "Token Expiry Reminder";
+
+        String html = "<p>Dear " + fullName + ",</p>"
+                + "<p>" + generatedMessage + "</p>"
+                + "<p>Please purchase a new token to ensure continued electricity supply.</p>"
+                + getCommonSignature();
+
+        sendEmail(to, subject, html);
+    }
 
 
     private void sendEmail(String to, String subject, String htmlContent) {

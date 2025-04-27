@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import rw.reg.Electricity.v1.models.MeterNumber;
 import rw.reg.Electricity.v1.models.User;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -22,4 +23,6 @@ public interface IMeterRepository extends JpaRepository<MeterNumber, UUID> {
             "OR (lower(u.email) LIKE lower(concat('%', :searchKey, '%'))) " +
             "OR (lower(u.nationalId) LIKE lower(concat('%', :searchKey, '%'))) ")
     Page<MeterNumber> search(Pageable pageable, String searchKey);
+
+    Optional<MeterNumber> findByMeterNumber(String meterNumber);
 }
