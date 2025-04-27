@@ -20,4 +20,6 @@ public interface IAuthService {
     void initiateResetPassword(@NotBlank @Email String email);
 
     void resetPassword(@NotBlank String email, @NotBlank String passwordResetCode, String newPassword);
+
+    User getLoggedInCustomer();
 }

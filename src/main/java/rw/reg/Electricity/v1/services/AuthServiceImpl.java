@@ -6,6 +6,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -161,6 +162,23 @@ public class AuthServiceImpl implements IAuthService {
         user.setActivationCode(null);
         this.mailService.sendAccountVerifiedSuccessfullyEmail(user.getEmail(), user.getFullName());
         userRepo.save(user);
+    }
+
+
+    //    get logged in user/ customer
+    @Override
+    public User getLoggedInCustomer() {
+        String email;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            email = ((UserDetails) principal).getUsername();
+        } else {
+            email = principal.toString();
+        }
+
+        return userRepo.findByEmail(email).orElseThrow(
+                () -> new ResourceNotFoundException("User", "id", email));
     }
 
 }

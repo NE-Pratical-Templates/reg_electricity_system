@@ -3,6 +3,7 @@ package rw.reg.Electricity.v1.controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -90,5 +91,20 @@ public class AuthController {
     public ResponseEntity<ApiResponseDTO> resetPassword(@RequestBody @Valid ResetPasswordDTO dto) {
         this.authService.resetPassword(dto.getEmail(), dto.getPasswordResetCode(), dto.getNewPassword());
         return ResponseEntity.ok(ApiResponseDTO.success("Password successfully reset"));
+    }
+
+    //     get logged in customer
+    @Operation(
+            summary = "Get currently logged-in customer",
+            description = "Fetch the profile of the authenticated customer based on JWT token",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Customer profile fetched successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Invalid or missing token")
+    })
+    @GetMapping(path = "/current-customer")
+    public ResponseEntity<ApiResponseDTO> currentlyLoggedInCustomer() {
+        return ResponseEntity.ok(ApiResponseDTO.success("Currently logged in customer fetched", authService.getLoggedInCustomer()));
     }
 }
