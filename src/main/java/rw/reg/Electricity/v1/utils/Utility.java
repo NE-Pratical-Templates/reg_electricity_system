@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import rw.reg.Electricity.v1.models.User;
 
 import java.security.SecureRandom;
+import java.time.chrono.ChronoLocalDateTime;
 import java.util.Random;
 
 public class Utility {
@@ -111,4 +112,7 @@ public class Utility {
     }
 
 
+    public static ChronoLocalDateTime<?> getCurrentDateTime() {
+        return java.time.LocalDateTime.now();
+    }
 }

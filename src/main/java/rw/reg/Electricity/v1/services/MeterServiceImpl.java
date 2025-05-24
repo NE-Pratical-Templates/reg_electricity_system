@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import rw.reg.Electricity.v1.dtos.request.CreateMeterDTO;
+import rw.reg.Electricity.v1.exceptions.BadRequestException;
 import rw.reg.Electricity.v1.exceptions.ResourceNotFoundException;
 import rw.reg.Electricity.v1.interfaces.IMeterService;
 import rw.reg.Electricity.v1.models.MeterNumber;
@@ -24,6 +25,9 @@ public class MeterServiceImpl implements IMeterService {
     @Override
     public MeterNumber createMeter(CreateMeterDTO dto, UUID customerID) {
         User user = userRepo.findById(customerID).orElseThrow(() -> new UsernameNotFoundException(" no user found wit that id "));
+        if (meterRepo.findByMeterNumber(dto.getMeterNumber()).isPresent()) {
+            throw new BadRequestException("Meter with this number already exists");
+        }
         MeterNumber meter = new MeterNumber();
         meter.setMeterNumber(dto.getMeterNumber());
         meter.setUser(user);

@@ -3,6 +3,7 @@ package rw.reg.Electricity.v1.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import rw.reg.Electricity.v1.dtos.response.TokenValidationResponse;
 import rw.reg.Electricity.v1.enums.ETokenStatus;
@@ -14,6 +15,8 @@ import rw.reg.Electricity.v1.models.Token;
 import rw.reg.Electricity.v1.repositories.IMeterRepository;
 import rw.reg.Electricity.v1.repositories.ITokenRepository;
 import rw.reg.Electricity.v1.utils.Utility;
+
+import java.util.List;
 
 
 @Service
@@ -37,6 +40,25 @@ public class TokenServiceImpl implements ITokenService {
             throw new BadRequestException("token has already expired");
         }
         return new TokenValidationResponse(Utility.formatToken(token.getToken()), token.getTokenValueDays(), token.getStatus());
+    }
+
+    @Scheduled(cron = "0 0 * * * *")
+    @Override
+    public void expireTokens() {
+        List<Token> tokenList = tokenRepo.findByStatus(ETokenStatus.NEW);
+        int expireCount = 0;
+        for (Token token : tokenList) {
+            if (token.getPurchasedDate().plusDays(token.getTokenValueDays()).isBefore(Utility.getCurrentDateTime())) {
+                token.setStatus(ETokenStatus.EXPIRED);
+                tokenRepo.save(token);
+                expireCount++;
+            }
+        }
+        if (expireCount > 0) {
+            System.out.println(expireCount + " tokens have been expired.");
+        } else {
+            System.out.println("No tokens to expire at this time.");
+        }
     }
 
 

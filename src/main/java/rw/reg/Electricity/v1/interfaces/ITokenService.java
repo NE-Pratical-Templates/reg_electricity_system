@@ -11,4 +11,5 @@ public interface ITokenService {
 
     TokenValidationResponse validateToken(String dto);
 
+    void expireTokens();
 }

@@ -46,6 +46,9 @@ public class Token extends InitiatorAudit {
     @Column(name = "amount")
     private Double amount;
 
+    @Column(name = "expiring_msg_sent",nullable = false,columnDefinition = "BOOLEAN DEFAULT FALSE")
+     private  boolean expiringMsgSent = false;
+
     @Transient
     public LocalDateTime getExpirationDate() {
         return purchasedDate.plusDays(tokenValueDays);
